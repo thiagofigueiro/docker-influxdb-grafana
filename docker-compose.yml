@@ -1,11 +1,11 @@
 influxdb:
-  image: influxdb:latest
+  image: influxdb:1.8
   container_name: influxdb
   ports:
-    - "8083:8083"
-    - "18086:8086"
-    - "8090:8090"
-    - "2003:2003"
+    - "8083"
+    - "8086"
+    - "8090"
+    - "2003"
   env_file:
     - 'env.influxdb'
   volumes:
