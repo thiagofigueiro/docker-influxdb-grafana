@@ -21,6 +21,14 @@ telegraf:
   volumes:
     - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
 
+qnap-telegraf:
+  image: qnap-telegraf:latest
+  container_name: qnap-telegraf
+  links:
+    - influxdb
+  volumes:
+    - ./qnap-telegraf.conf:/etc/telegraf/telegraf.conf:ro
+
 grafana:
   image: grafana/grafana:latest
   container_name: grafana
