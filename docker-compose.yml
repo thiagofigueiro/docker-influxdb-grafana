@@ -3,7 +3,7 @@ influxdb:
   container_name: influxdb
   ports:
     - "8083"
-    - "8086"
+    - "8086:8086"
     - "8090"
     - "2003"
   env_file:
@@ -13,13 +13,13 @@ influxdb:
     # sudo mkdir -p ./influxdb/data
     - ./influxdb/data:/var/lib/influxdb
 
-telegraf:
+synology-telegraf:
   image: telegraf:latest
-  container_name: telegraf
+  container_name: synology-telegraf
   links:
     - influxdb
   volumes:
-    - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    - ./synology-telegraf.conf:/etc/telegraf/telegraf.conf:ro
 
 qnap-telegraf:
   image: qnap-telegraf:latest
@@ -33,7 +33,7 @@ grafana:
   image: grafana/grafana:latest
   container_name: grafana
   ports:
-    - "3001:3000"
+    - "3000:3000"
   env_file:
     - 'env.grafana'
   user: "0"
