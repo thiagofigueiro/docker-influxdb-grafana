@@ -1,4 +1,5 @@
 influxdb:
+  restart: always
   image: influxdb:1.8
   container_name: influxdb
   ports:
@@ -14,6 +15,7 @@ influxdb:
     - ./influxdb/data:/var/lib/influxdb
 
 synology-telegraf:
+  restart: always
   image: telegraf:latest
   container_name: synology-telegraf
   links:
@@ -22,6 +24,7 @@ synology-telegraf:
     - ./synology-telegraf.conf:/etc/telegraf/telegraf.conf:ro
 
 qnap-telegraf:
+  restart: always
   image: qnap-telegraf:latest
   container_name: qnap-telegraf
   links:
@@ -30,6 +33,7 @@ qnap-telegraf:
     - ./qnap-telegraf.conf:/etc/telegraf/telegraf.conf:ro
 
 grafana:
+  restart: always
   image: grafana/grafana:latest
   container_name: grafana
   ports:
@@ -43,3 +47,11 @@ grafana:
     # Data persistency
     # sudo mkdir -p ./grafana/data; chown 472:472 ./grafana/data
     - ./grafana/data:/var/lib/grafana
+
+unifi-poller:
+  restart: always
+  image: golift/unifi-poller:latest
+  links:
+    - influxdb
+  env_file:
+    - 'env.unpoller'
