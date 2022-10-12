@@ -1,57 +1,80 @@
-influxdb:
-  restart: always
-  image: influxdb:1.8
-  container_name: influxdb
-  ports:
-    - "8083"
-    - "8086:8086"
-    - "8090"
-    - "2003"
-  env_file:
-    - 'env.influxdb'
-  volumes:
-    # Data persistency
-    # sudo mkdir -p ./influxdb/data
-    - ./influxdb/data:/var/lib/influxdb
+version: '3'
 
-synology-telegraf:
-  restart: always
-  image: telegraf:latest
-  container_name: synology-telegraf
-  links:
-    - influxdb
-  volumes:
-    - ./synology-telegraf.conf:/etc/telegraf/telegraf.conf:ro
+services:
+  influxdb:
+    restart: always
+    image: influxdb:1.8
+    container_name: influxdb
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    ports:
+      - "8083"
+      - "8086:8086"
+      - "8090"
+      - "2003"
+    env_file:
+      - 'env.influxdb'
+    volumes:
+      # Data persistency
+      # sudo mkdir -p ./influxdb/data
+      - ./influxdb/data:/var/lib/influxdb
 
-qnap-telegraf:
-  restart: always
-  image: qnap-telegraf:latest
-  container_name: qnap-telegraf
-  links:
-    - influxdb
-  volumes:
-    - ./qnap-telegraf.conf:/etc/telegraf/telegraf.conf:ro
+  synology-telegraf:
+    restart: always
+    image: telegraf:latest
+    container_name: synology-telegraf
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    links:
+      - influxdb
+    volumes:
+      - ./synology-telegraf.conf:/etc/telegraf/telegraf.conf:ro
 
-grafana:
-  restart: always
-  image: grafana/grafana:latest
-  container_name: grafana
-  ports:
-    - "3000:3000"
-  env_file:
-    - 'env.grafana'
-  user: "0"
-  links:
-    - influxdb
-  volumes:
-    # Data persistency
-    # sudo mkdir -p ./grafana/data; chown 472:472 ./grafana/data
-    - ./grafana/data:/var/lib/grafana
+  qnap-telegraf:
+    restart: always
+    image: qnap-telegraf:latest
+    container_name: qnap-telegraf
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    links:
+      - influxdb
+    volumes:
+      - ./qnap-telegraf.conf:/etc/telegraf/telegraf.conf:ro
 
-unifi-poller:
-  restart: always
-  image: golift/unifi-poller:latest
-  links:
-    - influxdb
-  env_file:
-    - 'env.unpoller'
+  grafana:
+    restart: always
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    env_file:
+      - 'env.grafana'
+    user: "0"
+    links:
+      - influxdb
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      # Data persistency
+      # sudo mkdir -p ./grafana/data; chown 472:472 ./grafana/data
+      - ./grafana/data:/var/lib/grafana
+
+  unifi-poller:
+    restart: always
+    image: golift/unifi-poller:latest
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    links:
+      - influxdb
+    env_file:
+      - 'env.unpoller'
